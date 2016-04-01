@@ -8,6 +8,7 @@ user = set([])#將user ID放入,可指定使用者,空白視為全選
 
 def streams_requests(requests_list):
     requests_dict = {}
+    requests_data = {}
     for types in requests_list:
         try:
             while(True):
@@ -17,10 +18,11 @@ def streams_requests(requests_list):
                 time.sleep(180)
         except:
             None
+        requests_data[types] = None
         for info in requests_dict[types]:
             if info['type'] == types:
-                requests_dict[types] = info["data"]
-    return requests_dict
+                requests_data[types] = info["data"]
+    return requests_data
 
 for people in csv.reader(user_file,encoding='utf-8'):
     user_id_set = set(eval("['"+str(people[10])+"']"))
@@ -60,30 +62,30 @@ for people in csv.reader(user_file,encoding='utf-8'):
                     json.dump(activities,activities_json)
 
                 requests_list = ['time','latlng','distance','altitude','velocity_smooth','heartrate','cadence','watts','temp','grade_smooth']
-                requests_dict = streams_requests(requests_list)
-                print(requests_dict)
+                requests_data = streams_requests(requests_list)
+
                 streams_data_list = []
                 streams_data_list_csv = []
                 streams_csv = open(filepath+"/"+str(id)+"_streams.csv","ab")
                 csv_header = ['time','lat','lng','distance','altitude','velocity_smooth','heartrate','cadence','watts','temp','grade_smooth']
                 csv.writer(streams_csv,encoding='UTF-8').writerow(csv_header)
-                for count in range(0,len(requests_dict["time"])):
+                for count in range(0,len(requests_data["time"])):
                     streams_data_temp = {}
                     streams_data_temp_csv = []
                     streams_data_temp["id"] = id
                     for type in requests_list:
-                        if requests_dict[type] != None:
+                        if requests_data[type] != None:
                             if type == "latlng":
-                                streams_data_temp["lat"] = requests_dict[type][count][0]
-                                streams_data_temp["lng"] = requests_dict[type][count][1]
-                                streams_data_temp_csv += [requests_dict[type][count][0],requests_dict[type][count][1]]
+                                streams_data_temp["lat"] = requests_data[type][count][0]
+                                streams_data_temp["lng"] = requests_data[type][count][1]
+                                streams_data_temp_csv += [requests_data[type][count][0],requests_data[type][count][1]]
                             else:
                                 if type == "velocity_smooth":
-                                    streams_data_temp["velocity_smooth"] = requests_dict["velocity_smooth"][count]*3.6
-                                    streams_data_temp_csv += [requests_dict["velocity_smooth"][count]*3.6]
+                                    streams_data_temp["velocity_smooth"] = requests_data["velocity_smooth"][count]*3.6
+                                    streams_data_temp_csv += [requests_data["velocity_smooth"][count]*3.6]
                                 else:
-                                    streams_data_temp[type] = requests_dict[type][count]
-                                    streams_data_temp_csv += [requests_dict[type][count]]
+                                    streams_data_temp[type] = requests_data[type][count]
+                                    streams_data_temp_csv += [requests_data[type][count]]
                         else:
                             if type == "latlng":
                                 streams_data_temp["lat"] = "Null"
@@ -100,7 +102,7 @@ for people in csv.reader(user_file,encoding='utf-8'):
                     streams_json.close()
 
                 table = table | id_set
-                plot_data(requests_dict,filepath)
+                plot_data(requests_data,filepath)
                 activities_direct = open(user_path+"/direct_table.csv","ab")#建立direct_table.csv
                 csv.writer(activities_direct,encoding='UTF-8').writerow([id,filepath])
                 activities_direct.close()
