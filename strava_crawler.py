@@ -17,7 +17,7 @@ for people in csv.reader(user_file,encoding='utf-8'):
             while(True):
                 activities_mes = requests.get(com_url+"activities", headers=header).json()
                 error = activities_mes["errors"] #這行成功則表示Requests達到上限,錯誤則表示Requests正常,跳到except執行
-                print("Rate limit , wait 180 second")
+                print("Activities requests occur Rate limit , wait 180 second")
                 time.sleep(180)
         except:
             None
@@ -30,7 +30,7 @@ for people in csv.reader(user_file,encoding='utf-8'):
 
         for activities in activities_mes:
             id = activities["id"]
-            if(id not in table): # 判斷此筆activities資料是否已經存在
+            if(str(id) not in table): # 判斷此筆activities資料是否已經存在
                 average_speed = activities["average_speed"]*3.6 # 將 公尺/秒 轉換為 公里/小時
                 distance  = activities["distance"]/100 # 將 m 轉換為 km
                 type_name = activities["type"]
@@ -38,8 +38,7 @@ for people in csv.reader(user_file,encoding='utf-8'):
                 if not os.path.exists(filepath):
                     os.makedirs(filepath)
 
-                requests_list = ['time','latlng','distance','altitude','velocity_smooth','heartrate','cadence','watts','temp','grade_smooth']
-                requests_data = streams_requests(id,requests_list,com_url,header) # 依照requests_list中的參數依序requests得到結果並回傳資料
+                requests_data = streams_requests(id,com_url,header) # 依照ID編號 Requests 該 Streams 的所有資料並分解出Data部分再回傳
 
                 streams_data_list,streams_data_list_csv = analysis_data(id,requests_data) # 將requests得到的資料分解成 .json 格式並回傳,同時將其寫入到.csv 檔中
 
@@ -65,5 +64,5 @@ for people in csv.reader(user_file,encoding='utf-8'):
                     csv.writer(activities_table).writerow(table)#將table寫入檔案中
                     activities_table.close()
 
-                print("ID : " + str(id) + " date finished download") # YA!!! 下載完了
+                print("ID : " + str(id) + " finished download") # YA!!! 下載完了
 user_file.close()

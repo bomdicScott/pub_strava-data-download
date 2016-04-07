@@ -1,15 +1,16 @@
 #-​*- coding: utf-8 -*​-
 import requests,time,unicodecsv as csv
 
-def streams_requests(id,requests_list,com_url,header):
+def streams_requests(streams_id,com_url,header):
+    requests_list = ['time','latlng','distance','altitude','velocity_smooth','heartrate','cadence','watts','temp','grade_smooth']
     requests_dict = {}
     requests_data = {}
     for types in requests_list:
         try:
             while(True):
-                requests_dict[types] = requests.get(com_url+"activities/"+str(id)+"/streams/"+types, headers=header).json()
+                requests_dict[types] = requests.get(com_url+"activities/"+str(streams_id)+"/streams/"+types, headers=header).json()
                 error = requests_dict[types]["errors"] #成功則表示requests達到上限
-                print("Rate limit , wait 180 second")
+                print("Streams requests occur Rate limit , wait 180 second")
                 time.sleep(180)
         except:
             None
