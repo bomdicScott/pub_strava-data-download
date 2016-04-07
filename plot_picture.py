@@ -1,5 +1,15 @@
 import matplotlib.pyplot as plt
 
+def compute_limit(plot_data_list):
+    try:
+        limit = max(plot_data_list)
+        return limit
+    except:
+        for x in range(0,len(plot_data_list)):
+            if plot_data_list[x] == None:
+                plot_data_list[x] = -10
+        return max(plot_data_list)
+
 def plot_picture(X,Y1,Y2,Xlim,Ylim1,Ylim2,xlable,Y1lable,Y2lable,Title,position,figure,IO_door):
     picture = figure.add_subplot(position)
     picture.plot(X, Y1)
@@ -39,16 +49,17 @@ def plot_data(plot_data_list,savepath):
         altitude_limit = 250
     else:
         IO_door = "outdoor"
-        if max(plot_data_list["altitude"]) < 250:
+        altitude_limit = compute_limit(plot_data_list["altitude"])
+        if altitude_limit < 250:
             altitude_limit = 250
         else:
-            altitude_limit = max(plot_data_list["altitude"])*1.1
+            altitude_limit *= 1.1
 
     if plot_data_list["time"] == None or plot_data_list["time"] == []:
         time_exist = False
     else:
         time_exist = True
-        time_limit = max(plot_data_list["time"])
+        time_limit = compute_limit(plot_data_list["time"])
 
     if plot_data_list["distance"] == None or plot_data_list["distance"] == []:
         distance_exist = False
@@ -56,7 +67,7 @@ def plot_data(plot_data_list,savepath):
         distance_exist = True
         for x in range(0,len(plot_data_list["distance"])):
             plot_data_list["distance"][x] /= 1000
-        distance_limit = max(plot_data_list["distance"])
+        distance_limit = compute_limit(plot_data_list["distance"])
 
     if plot_data_list["heartrate"] != None and plot_data_list["heartrate"] != []:
         heartrate_limit = 220
@@ -67,13 +78,13 @@ def plot_data(plot_data_list,savepath):
     if plot_data_list["velocity_smooth"] != None and plot_data_list["velocity_smooth"] != []:
         for x in range(0,len(plot_data_list["velocity_smooth"])):
             plot_data_list["velocity_smooth"][x] *= 3.6
-        speed_limit = max(plot_data_list["velocity_smooth"])*1.1
+        speed_limit = compute_limit(plot_data_list["velocity_smooth"])*1.1
         if time_exist:
             plot_picture(plot_data_list["time"],plot_data_list["velocity_smooth"],plot_data_list["altitude"],time_limit,speed_limit,altitude_limit,"Time(sec)","Speed(km/hr)","Altitude(m)","Speed(km/hr) + Altitude(m)",312,figure1,IO_door)
         if distance_exist:
             plot_picture(plot_data_list["distance"],plot_data_list["velocity_smooth"],plot_data_list["altitude"],distance_limit,speed_limit,altitude_limit,"Distance(km)","Speed(km/hr)","Altitude(m)","Speed(km/hr) + Altitude(m)",312,figure2,IO_door)
     if plot_data_list["grade_smooth"] != None and plot_data_list["grade_smooth"] != []:
-        grade_smooth_limit = max(plot_data_list["grade_smooth"])*1.1
+        grade_smooth_limit = compute_limit(plot_data_list["grade_smooth"])*1.1
         if time_exist:
             plot_picture(plot_data_list["time"],plot_data_list["grade_smooth"],plot_data_list["altitude"],time_limit,grade_smooth_limit,altitude_limit,"Time(sec)","grade_smooth(%)","Altitude(m)","grade_smooth(%) + Altitude(m)",313,figure1,IO_door)
         if distance_exist:
@@ -84,22 +95,19 @@ def plot_data(plot_data_list,savepath):
         figure3.subplots_adjust(top = 0.95 , bottom = 0.05)
         figure4.subplots_adjust(top = 0.95 , bottom = 0.05)
         if plot_data_list["cadence"] != None and plot_data_list["cadence"] != []:
-            cadence_limit = max(plot_data_list["cadence"])*1.1
+            cadence_limit = compute_limit(plot_data_list["cadence"])*1.1
             if time_exist:
                 plot_picture(plot_data_list["time"],plot_data_list["cadence"],plot_data_list["altitude"],time_limit,cadence_limit,altitude_limit,"Time(sec)","cadence(rpm)","Altitude(m)","cadence(rpm) + Altitude(m)",311,figure3,IO_door)
             if distance_exist:
                 plot_picture(plot_data_list["distance"],plot_data_list["cadence"],plot_data_list["altitude"],distance_limit,cadence_limit,altitude_limit,"Distance(km)","cadence(rpm)","Altitude(m)","cadence(rpm) + Altitude(m)",311,figure4,IO_door)
         if plot_data_list["temp"] != None and plot_data_list["temp"] != []:
-            temp_limit = max(plot_data_list["temp"])*1.1
+            temp_limit =compute_limit(plot_data_list["temp"])*1.1
             if time_exist:
                 plot_picture(plot_data_list["time"],plot_data_list["temp"],plot_data_list["altitude"],time_limit,temp_limit,altitude_limit,"Time(sec)","Temperature(C)","Altitude(m)","Temperature(C) + Altitude(m)",312,figure3,IO_door)
             if distance_exist:
                 plot_picture(plot_data_list["distance"],plot_data_list["temp"],plot_data_list["altitude"],distance_limit,temp_limit,altitude_limit,"Distance(km)","Temperature(C)","Altitude(m)","Temperature(C) + Altitude(m)",312,figure4,IO_door)
         if plot_data_list["watts"] != None and plot_data_list["watts"] != []:
-            for x in range(0,len(plot_data_list["watts"])):
-                if plot_data_list["watts"][x] == None:
-                    plot_data_list["watts"][x] = -10
-            watts_limit = max(plot_data_list["watts"])*1.1
+            watts_limit = compute_limit(plot_data_list["watts"])*1.1
             if time_exist:
                 plot_picture(plot_data_list["time"],plot_data_list["watts"],plot_data_list["altitude"],time_limit,watts_limit,altitude_limit,"Time(sec)","Watts(W)","Altitude(m)","Watts(W)  + Altitude(m)",313,figure3,IO_door)
             if distance_exist:
