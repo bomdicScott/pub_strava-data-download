@@ -3,7 +3,7 @@ import os,json
 from plot_picture import *
 from support_function import *
 
-com_filepath = "C:/users/sean/desktop/bOMDIC/" #檔案讀存路徑
+com_filepath = "/Users/Scott/git_repositories/strava_raw/" #檔案讀存路徑
 user_file = open(com_filepath+"strava_user.csv","rb") #讀取使用者資訊
 com_url = 'https://www.strava.com/api/v3/' # API路徑
 user = set([])#將user ID放入,可指定使用者,空白視為全選
@@ -11,7 +11,7 @@ user = set([])#將user ID放入,可指定使用者,空白視為全選
 for people in csv.reader(user_file,encoding='utf-8'):
     user_id_set = set([str(people[10])])
     if( user == set([]) or user & user_id_set == user_id_set ):# 判斷此user是否在限制名單內,若名單為空則視為不限制user
-        print(people[2]+people[3]+" START")
+        print("user_ID: " + people[10]+ " START")
 
         header = {'Authorization': 'Bearer '+people[1]} #將token加在header中
         try:#處理Requests上限問題
@@ -49,8 +49,8 @@ for people in csv.reader(user_file,encoding='utf-8'):
 
                 csv_header = ['time','lat','lng','distance','altitude','velocity_smooth','heartrate','cadence','watts','temp','grade_smooth']
                 with open(filepath+"/"+str(id)+"_streams.csv","ab") as streams_csv:
-                    csv.writer(streams_csv,encoding='UTF-8').writerow(csv_header) # 將header寫入到.csv檔中
-                    csv.writer(streams_csv,encoding='UTF-8').writerows(streams_data_list_csv)#將分解完的資料存入.csv中
+                    csv.writer(streams_csv).writerow(csv_header) # 將header寫入到.csv檔中
+                    csv.writer(streams_csv).writerows(streams_data_list_csv)#將分解完的資料存入.csv中
                     streams_csv.close()
                 with open(filepath+"/activities.json","w") as activities_json:#將單筆 activities 的資料寫入 .json 檔中
                     json.dump(activities,activities_json)
@@ -59,12 +59,12 @@ for people in csv.reader(user_file,encoding='utf-8'):
                     json.dump(streams_data_list,streams_json)
                     streams_json.close()
                 with open(user_path+"/direct_table.csv","ab") as activities_direct:#建立direct_table.csv
-                    csv.writer(activities_direct,encoding='UTF-8').writerow([id,filepath])#紀錄檔案路徑,以後讀取檔案時使用
+                    csv.writer(activities_direct).writerow([id,filepath])#紀錄檔案路徑,以後讀取檔案時使用
                     activities_direct.close()
                 table = table | id_set #在table中加入最新的 activities ID
                 with open(user_path+"/activities_table.csv","w+b") as activities_table:
-                    csv.writer(activities_table,encoding='UTF-8').writerow(list(table))#將table寫入檔案中
+                    csv.writer(activities_table).writerow(list(table))#將table寫入檔案中
                     activities_table.close()
 
-                print(people[2]+" "+people[3]+" 編號 : "+str(id)+" 的資料下載完成了唷～") # YA!!! 下載完了
+                print("ID : "+str(id)+" data download is finished") # YA!!! 下載完了
 user_file.close()
