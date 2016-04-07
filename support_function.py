@@ -20,12 +20,11 @@ def streams_requests(id,requests_list,com_url,header):
     return requests_data
 
 def read_table(table_path):
-    table = set([]) #table初始化，若檔案開啟失敗，表示尚未建檔，則回傳此空集合
+    table = [] #table初始化，若檔案開啟失敗，表示尚未建檔，則回傳此空集合
     try:
         activities_table = open(table_path,"r+b")
         for table in csv.reader(activities_table,encoding='utf-8'):
-            table = set(table)#讀取成功,將table轉換為SET形式
-        activities_table.close()
+            activities_table.close()
     except:
         None
     return table
