@@ -1,6 +1,7 @@
+#-​*- coding: utf-8 -*​-
 import requests,time,unicodecsv as csv
 
-def streams_requests(requests_list,com_url,header):
+def streams_requests(id,requests_list,com_url,header):
     requests_dict = {}
     requests_data = {}
     for types in requests_list:
@@ -29,7 +30,7 @@ def read_table(table_path):
         None
     return table
 
-def analysis_data(requests_data):
+def analysis_data(id,requests_data):
     streams_data_list = []
     streams_data_list_csv = []
     requests_list = ['time','latlng','distance','altitude','velocity_smooth','heartrate','cadence','watts','temp','grade_smooth']

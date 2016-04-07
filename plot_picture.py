@@ -1,3 +1,4 @@
+#-​*- coding: utf-8 -*​-
 import matplotlib.pyplot as plt
 
 def compute_limit(plot_data_list):

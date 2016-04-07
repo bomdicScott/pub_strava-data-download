@@ -1,3 +1,4 @@
+#-​*- coding: utf-8 -*​-
 import os,json
 from plot_picture import *
 from support_function import *
@@ -40,9 +41,9 @@ for people in csv.reader(user_file,encoding='utf-8'):
                     os.makedirs(filepath)
 
                 requests_list = ['time','latlng','distance','altitude','velocity_smooth','heartrate','cadence','watts','temp','grade_smooth']
-                requests_data = streams_requests(requests_list,com_url,header) # 依照requests_list中的參數依序requests得到結果並回傳資料
+                requests_data = streams_requests(id,requests_list,com_url,header) # 依照requests_list中的參數依序requests得到結果並回傳資料
 
-                streams_data_list,streams_data_list_csv = analysis_data(requests_data) # 將requests得到的資料分解成 .json 格式並回傳,同時將其寫入到.csv 檔中
+                streams_data_list,streams_data_list_csv = analysis_data(id,requests_data) # 將requests得到的資料分解成 .json 格式並回傳,同時將其寫入到.csv 檔中
 
                 plot_data(requests_data,filepath) # 繪製圖表並輸出成.png檔案
 
