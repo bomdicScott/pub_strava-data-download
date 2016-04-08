@@ -29,8 +29,10 @@ for people in csv.reader(user_file,encoding='utf-8'):
         table = read_table(user_path+"/activities_table.csv") #讀取使用者 activities_table 中的資料
 
         for activities in activities_mes:
+
             id = activities["id"]
             if(str(id) not in table): # 判斷此筆activities資料是否已經存在
+                time_start = time.time()
                 average_speed = activities["average_speed"]*3.6 # 將 公尺/秒 轉換為 公里/小時
                 distance  = activities["distance"]/100 # 將 m 轉換為 km
                 type_name = activities["type"]
@@ -63,6 +65,6 @@ for people in csv.reader(user_file,encoding='utf-8'):
                 with open(user_path+"/activities_table.csv","w+b") as activities_table:
                     csv.writer(activities_table).writerow(table)#將table寫入檔案中
                     activities_table.close()
-
-                print("ID : " + str(id) + " finished download") # YA!!! 下載完了
+                time_stop = time.time()
+                print("ID : " + str(id) + " finished download   COST: "+str('%.2f' % float(time_stop-time_start))+" second") # YA!!! 下載完了
 user_file.close()
