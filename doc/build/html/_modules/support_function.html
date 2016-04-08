@@ -1,0 +1,323 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>support_function &mdash; strava_crawler 1.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="strava_crawler 1.0 documentation" href="../index.html"/>
+        <link rel="up" title="Module code" href="index.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> strava_crawler
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../strava_crawler.html">strava_crawler</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../support_function.html">support_function</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../plot_picture.html">plot_picture</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">strava_crawler</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="index.html">Module code</a> &raquo;</li>
+      
+    <li>support_function</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for support_function</h1><div class="highlight"><pre>
+<span></span><span class="c1">#-​*- coding: utf-8 -*​-</span>
+<span class="kn">import</span> <span class="nn">requests</span><span class="o">,</span><span class="nn">time</span><span class="o">,</span><span class="nn">unicodecsv</span> <span class="kn">as</span> <span class="nn">csv</span>
+
+<div class="viewcode-block" id="streams_requests"><a class="viewcode-back" href="../support_function.html#support_function.streams_requests">[docs]</a><span class="k">def</span> <span class="nf">streams_requests</span><span class="p">(</span><span class="n">streams_id</span><span class="p">,</span><span class="n">com_url</span><span class="p">,</span><span class="n">header</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function requests streams data from STRAVA API and return the part of data</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        - streams_id (int):  The number of activities.</span>
+<span class="sd">        - com_url (str): The API common path</span>
+<span class="sd">        - header (dict): Include user&#39;s token</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        - requests_data (dict): Include 10 types element of activities data</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        - AttributeError</span>
+<span class="sd">        - KeyError</span>
+
+<span class="sd">    A really simple function. Really!</span>
+
+<span class="sd">    &gt;&gt;&gt; streams_id = `activities ID`</span>
+<span class="sd">    &gt;&gt;&gt; com_url = &#39;https://www.strava.com/api/v3/&#39;</span>
+<span class="sd">    &gt;&gt;&gt; header = {&#39;Authorization&#39;: &#39;Bearer &#39; + `user token` }</span>
+<span class="sd">    &gt;&gt;&gt; streams_requests(streams_id,com_url,header)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">requests_list</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">,</span><span class="s1">&#39;latlng&#39;</span><span class="p">,</span><span class="s1">&#39;distance&#39;</span><span class="p">,</span><span class="s1">&#39;altitude&#39;</span><span class="p">,</span><span class="s1">&#39;velocity_smooth&#39;</span><span class="p">,</span><span class="s1">&#39;heartrate&#39;</span><span class="p">,</span><span class="s1">&#39;cadence&#39;</span><span class="p">,</span><span class="s1">&#39;watts&#39;</span><span class="p">,</span><span class="s1">&#39;temp&#39;</span><span class="p">,</span><span class="s1">&#39;grade_smooth&#39;</span><span class="p">]</span>
+    <span class="n">requests_dict</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">requests_data</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">types</span> <span class="ow">in</span> <span class="n">requests_list</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">while</span><span class="p">(</span><span class="bp">True</span><span class="p">):</span>
+                <span class="n">requests_dict</span><span class="p">[</span><span class="n">types</span><span class="p">]</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">com_url</span><span class="o">+</span><span class="s2">&quot;activities/&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">streams_id</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;/streams/&quot;</span><span class="o">+</span><span class="n">types</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">header</span><span class="p">)</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+                <span class="n">error</span> <span class="o">=</span> <span class="n">requests_dict</span><span class="p">[</span><span class="n">types</span><span class="p">][</span><span class="s2">&quot;errors&quot;</span><span class="p">]</span> <span class="c1">#成功則表示requests達到上限</span>
+                <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Streams requests occur Rate limit , wait 180 second&quot;</span><span class="p">)</span>
+                <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">180</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="bp">None</span>
+        <span class="n">requests_data</span><span class="p">[</span><span class="n">types</span><span class="p">]</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">for</span> <span class="n">info</span> <span class="ow">in</span> <span class="n">requests_dict</span><span class="p">[</span><span class="n">types</span><span class="p">]:</span> <span class="c1"># 將requests結果中的data部分分解出來</span>
+            <span class="k">if</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">types</span><span class="p">:</span>
+                <span class="n">requests_data</span><span class="p">[</span><span class="n">types</span><span class="p">]</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">requests_data</span></div>
+
+<div class="viewcode-block" id="read_table"><a class="viewcode-back" href="../support_function.html#support_function.read_table">[docs]</a><span class="k">def</span> <span class="nf">read_table</span><span class="p">(</span><span class="n">table_path</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Read activities_table.csv and return it.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        - table_path (str):  The path of activities_table.csv, different user has different table_path</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        - table (list): Include the activities ID which is finished download</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        - AttributeError</span>
+<span class="sd">        - KeyError</span>
+
+<span class="sd">    A really simple function. Really!</span>
+
+<span class="sd">    &gt;&gt;&gt; table_path = &quot;C:/../../&quot;+ user name + &quot;/&quot; + &quot;activities_table.csv&quot;</span>
+<span class="sd">    &gt;&gt;&gt; read_table(table_path)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">table</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1">#table初始化，若檔案開啟失敗，表示尚未建檔，則回傳此空集合</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">activities_table</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">table_path</span><span class="p">,</span><span class="s2">&quot;r+b&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">table</span> <span class="ow">in</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">activities_table</span><span class="p">,</span><span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">):</span>
+            <span class="n">activities_table</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="bp">None</span>
+    <span class="k">return</span> <span class="n">table</span></div>
+
+<div class="viewcode-block" id="analysis_data"><a class="viewcode-back" href="../support_function.html#support_function.analysis_data">[docs]</a><span class="k">def</span> <span class="nf">analysis_data</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span><span class="n">requests_data</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Disaggregated data in the order then parse into json and csv format</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        - id (int):  The number of activities.</span>
+<span class="sd">        - requests_data (dict): Include 10 types element of activities data</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        - streams_json_list (list): data in json format</span>
+<span class="sd">        - streams_csv_list (list): data in csv format</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        - AttributeError</span>
+<span class="sd">        - KeyError</span>
+
+<span class="sd">    A really simple function. Really!</span>
+
+<span class="sd">    &gt;&gt;&gt; id = `activities ID`</span>
+<span class="sd">    &gt;&gt;&gt; com_url = &#39;https://www.strava.com/api/v3/&#39;</span>
+<span class="sd">    &gt;&gt;&gt; header = {&#39;Authorization&#39;: &#39;Bearer &#39; + `user token` }</span>
+<span class="sd">    &gt;&gt;&gt; requests_data = streams_requests(id,com_url,header)</span>
+<span class="sd">    &gt;&gt;&gt; analysis_data(id,requests_data)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">streams_json_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">streams_csv_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">requests_list</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">,</span><span class="s1">&#39;latlng&#39;</span><span class="p">,</span><span class="s1">&#39;distance&#39;</span><span class="p">,</span><span class="s1">&#39;altitude&#39;</span><span class="p">,</span><span class="s1">&#39;velocity_smooth&#39;</span><span class="p">,</span><span class="s1">&#39;heartrate&#39;</span><span class="p">,</span><span class="s1">&#39;cadence&#39;</span><span class="p">,</span><span class="s1">&#39;watts&#39;</span><span class="p">,</span><span class="s1">&#39;temp&#39;</span><span class="p">,</span><span class="s1">&#39;grade_smooth&#39;</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">count</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">requests_data</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">])):</span>
+        <span class="n">streams_json_temp</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">streams_csv_temp</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">streams_json_temp</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">id</span>
+        <span class="k">for</span> <span class="nb">type</span> <span class="ow">in</span> <span class="n">requests_list</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">requests_data</span><span class="p">[</span><span class="nb">type</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">type</span> <span class="o">==</span> <span class="s2">&quot;latlng&quot;</span><span class="p">:</span>
+                    <span class="n">streams_json_temp</span><span class="p">[</span><span class="s2">&quot;lat&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">requests_data</span><span class="p">[</span><span class="nb">type</span><span class="p">][</span><span class="n">count</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="n">streams_json_temp</span><span class="p">[</span><span class="s2">&quot;lng&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">requests_data</span><span class="p">[</span><span class="nb">type</span><span class="p">][</span><span class="n">count</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="n">streams_csv_temp</span> <span class="o">+=</span> <span class="p">[</span><span class="n">requests_data</span><span class="p">[</span><span class="nb">type</span><span class="p">][</span><span class="n">count</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">requests_data</span><span class="p">[</span><span class="nb">type</span><span class="p">][</span><span class="n">count</span><span class="p">][</span><span class="mi">1</span><span class="p">]]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">type</span> <span class="o">==</span> <span class="s2">&quot;velocity_smooth&quot;</span><span class="p">:</span>
+                        <span class="n">streams_json_temp</span><span class="p">[</span><span class="s2">&quot;velocity_smooth&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">requests_data</span><span class="p">[</span><span class="s2">&quot;velocity_smooth&quot;</span><span class="p">][</span><span class="n">count</span><span class="p">]</span><span class="o">*</span><span class="mf">3.6</span>
+                        <span class="n">streams_csv_temp</span> <span class="o">+=</span> <span class="p">[</span><span class="n">requests_data</span><span class="p">[</span><span class="s2">&quot;velocity_smooth&quot;</span><span class="p">][</span><span class="n">count</span><span class="p">]</span><span class="o">*</span><span class="mf">3.6</span><span class="p">]</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">streams_json_temp</span><span class="p">[</span><span class="nb">type</span><span class="p">]</span> <span class="o">=</span> <span class="n">requests_data</span><span class="p">[</span><span class="nb">type</span><span class="p">][</span><span class="n">count</span><span class="p">]</span>
+                        <span class="n">streams_csv_temp</span> <span class="o">+=</span> <span class="p">[</span><span class="n">requests_data</span><span class="p">[</span><span class="nb">type</span><span class="p">][</span><span class="n">count</span><span class="p">]]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">type</span> <span class="o">==</span> <span class="s2">&quot;latlng&quot;</span><span class="p">:</span>
+                    <span class="n">streams_json_temp</span><span class="p">[</span><span class="s2">&quot;lat&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Null&quot;</span>
+                    <span class="n">streams_json_temp</span><span class="p">[</span><span class="s2">&quot;lng&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Null&quot;</span>
+                    <span class="n">streams_csv_temp</span> <span class="o">+=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">streams_json_temp</span><span class="p">[</span><span class="nb">type</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Null&quot;</span>
+                    <span class="n">streams_csv_temp</span> <span class="o">+=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">streams_csv_list</span> <span class="o">+=</span> <span class="nb">eval</span><span class="p">(</span><span class="s1">&#39;[&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">streams_csv_temp</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;]&#39;</span><span class="p">)</span>
+        <span class="n">streams_json_list</span> <span class="o">+=</span> <span class="nb">eval</span><span class="p">(</span><span class="s1">&#39;[&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">streams_json_temp</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;]&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">streams_json_list</span><span class="p">,</span><span class="n">streams_csv_list</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Sean_Hsu.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="../_static/translations.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
