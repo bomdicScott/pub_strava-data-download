@@ -26,7 +26,7 @@ def main():
     com_filepath = "C:/users/sean/desktop/bOMDIC/" #檔案讀存路徑
     user_file = open(com_filepath+"strava_user.csv","rb") #讀取使用者資訊
     com_url = 'https://www.strava.com/api/v3/' # API路徑
-    user = ["0"]#將user ID放入,可指定使用者,空白視為全選
+    user = []#將user ID放入,可指定使用者,空白視為全選
 
     for people in csv.reader(user_file,encoding='utf-8'):
         if ( user == [] or people[10] in user ):# 判斷此user是否在限制名單內,若名單為空則視為不限制user

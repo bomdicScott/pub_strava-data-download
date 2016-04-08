@@ -9,7 +9,7 @@ Welcome to strava_crawler's documentation!
 Contents:
 
 .. toctree::
-   :maxdepth: 2
+   :numbered: 2
 
    strava_crawler
    support_function

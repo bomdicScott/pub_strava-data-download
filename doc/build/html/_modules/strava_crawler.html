@@ -81,9 +81,9 @@
             
             
                 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../strava_crawler.html">strava_crawler</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../support_function.html">support_function</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../plot_picture.html">plot_picture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../strava_crawler.html">1. strava_crawler</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../support_function.html">2. support_function</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../plot_picture.html">3. plot_picture</a></li>
 </ul>
 
             
@@ -157,7 +157,7 @@
     <span class="n">com_filepath</span> <span class="o">=</span> <span class="s2">&quot;C:/users/sean/desktop/bOMDIC/&quot;</span> <span class="c1">#檔案讀存路徑</span>
     <span class="n">user_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">com_filepath</span><span class="o">+</span><span class="s2">&quot;strava_user.csv&quot;</span><span class="p">,</span><span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="c1">#讀取使用者資訊</span>
     <span class="n">com_url</span> <span class="o">=</span> <span class="s1">&#39;https://www.strava.com/api/v3/&#39;</span> <span class="c1"># API路徑</span>
-    <span class="n">user</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;0&quot;</span><span class="p">]</span><span class="c1">#將user ID放入,可指定使用者,空白視為全選</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="p">[]</span><span class="c1">#將user ID放入,可指定使用者,空白視為全選</span>
 
     <span class="k">for</span> <span class="n">people</span> <span class="ow">in</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">user_file</span><span class="p">,</span><span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">):</span>
         <span class="k">if</span> <span class="p">(</span> <span class="n">user</span> <span class="o">==</span> <span class="p">[]</span> <span class="ow">or</span> <span class="n">people</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span> <span class="ow">in</span> <span class="n">user</span> <span class="p">):</span><span class="c1"># 判斷此user是否在限制名單內,若名單為空則視為不限制user</span>

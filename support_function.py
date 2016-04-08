@@ -19,9 +19,9 @@ def streams_requests(streams_id,com_url,header):
 
     A really simple function. Really!
 
-    >>> streams_id = `activities ID`
+    >>> streams_id = activities ID
     >>> com_url = 'https://www.strava.com/api/v3/'
-    >>> header = {'Authorization': 'Bearer ' + `user token` }
+    >>> header = {'Authorization': 'Bearer ' + user token  }
     >>> streams_requests(streams_id,com_url,header)
 
     """
