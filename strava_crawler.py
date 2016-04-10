@@ -19,14 +19,15 @@ def main():
         3. 由 streams 分解出之資料繪製成圖 ( Distance 為 x 軸 - Distance_pic.png , Time 為 x 軸 - Time_pic.png )
 
     注意 : 以上所有功能所儲存之檔案，均儲存於同一資料夾，且該資料夾之路徑為 -- 使用者名稱 / type_id_distance_speed \n
-            例 : Judith.Hsiang / Run_455904370_45.82_8.41
-                 曉春.賴 / Ride_452655005_498.70_16.12
+            例 : Judith.Hsiang / Run_455904370_4.58km_8.41kmph_143bpm
+                 曉春.賴 / Ride_452655005_49.87km_16.12kmph
 
     """
-    com_filepath = "C:/users/sean/desktop/bOMDIC/" #檔案讀存路徑
+    com_filepath = "/Users/Scott/git_repositories/strava_raw_data/" #檔案讀存路徑
     user_file = open(com_filepath+"strava_user.csv","rb") #讀取使用者資訊
     com_url = 'https://www.strava.com/api/v3/' # API路徑
-    user = []#將user ID放入,可指定使用者,空白視為全選
+    user = []  # 將user ID放入,可指定使用者,空白視為全選
+    # user = ["523691"]  # scott
 
     for people in csv.reader(user_file,encoding='utf-8'):
         if ( user == [] or people[10] in user ):# 判斷此user是否在限制名單內,若名單為空則視為不限制user
@@ -54,9 +55,15 @@ def main():
                 if(str(id) not in table): # 判斷此筆activities資料是否已經存在
                     time_start = time.time()
                     average_speed = activities["average_speed"]*3.6 # 將 公尺/秒 轉換為 公里/小時
-                    distance  = activities["distance"]/100 # 將 m 轉換為 km
+                    distance  = activities["distance"]/1000 # 將 m 轉換為 km
                     type_name = activities["type"]
-                    filepath = user_path+"/"+type_name+"_"+str(id)+"_"+str('%.2f' % distance)+"_"+str('%.2f' % average_speed) # 資料夾命名規則 type_id_distance_speed
+
+                    if (activities["has_heartrate"] == True):
+                        average_heartrate = activities["average_heartrate"]
+                        filepath = user_path+"/"+type_name+"_"+str(id)+"_"+str('%.2f' % distance)+"km_"+str('%.2f' % average_speed)+"kmph_"+str('%d' % average_heartrate)+"bpm" # 資料夾命名規則 type_id_distance_speed
+                    else:
+                        filepath = user_path+"/"+type_name+"_"+str(id)+"_"+str('%.2f' % distance)+"km_"+str('%.2f' % average_speed)+"kmph"
+
                     if not os.path.exists(filepath):
                         os.makedirs(filepath)
 
@@ -78,6 +85,9 @@ def main():
                     with open(filepath+"/"+str(id)+"_streams.json","w") as streams_json:#將分解完的資料存入 .json 檔中
                         json.dump(streams_json_list,streams_json)
                         streams_json.close()
+                    with open(filepath+"/"+"strava_stream.json","w") as streams_json:#compatible with louie's format
+                        json.dump(streams_json_list,streams_json)
+                        streams_json.close()
                     with open(user_path+"/direct_table.csv","ab") as activities_direct:#建立direct_table.csv
                         csv.writer(activities_direct).writerow([id,filepath])#紀錄檔案路徑,以後讀取檔案時使用
                         activities_direct.close()
@@ -86,7 +96,10 @@ def main():
                         csv.writer(activities_table).writerow(table)#將table寫入檔案中
                         activities_table.close()
                     time_stop = time.time()
-                    print("ID : " + str(id) + " finished download   COST: "+str('%.2f' % (float(time_stop-time_start)%180))+" second") # YA!!! 下載完了
+                    if (activities["has_heartrate"] == True):
+                        print("ID : " + str(id) + " finished download   COST: "+str('%.2f' % (float(time_stop-time_start)%180))+" second, has_heartrate")
+                    else:
+                        print("ID : " + str(id) + " finished download   COST: "+str('%.2f' % (float(time_stop-time_start)%180))+" second")
     user_file.close()
 
 main()

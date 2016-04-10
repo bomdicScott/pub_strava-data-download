@@ -103,7 +103,8 @@ def analysis_data(id,requests_data):
     for count in range(0,len(requests_data["time"])):
         streams_json_temp = {}
         streams_csv_temp = []
-        streams_json_temp["id"] = id
+        # streams_json_temp["id"] = id
+        streams_json_temp["activity_id"] = id  # compatiable with louie's format
         for type in requests_list:
             if requests_data[type] != None:
                 if type == "latlng":
