@@ -1,5 +1,6 @@
 #-​*- coding: utf-8 -*​-
 import requests,time,unicodecsv as csv
+import os
 
 def streams_requests(streams_id,com_url,header):
     """
@@ -151,10 +152,14 @@ def read_id(list_path):
 
     """
     id_list = []
-    try:
+    # try:
+    if os.path.exists(list_path):
         with open(list_path,"r+b") as data_list:
             for data in csv.reader(data_list,encoding='utf-8'):
-                id_list += eval("["+str(data)[2:11]+"]")
-    except:
-        None
+                if str(data)[1] == 'u':
+                    id_list += eval("["+str(data)[3:12]+"]")
+                else:
+                    id_list += eval("["+str(data)[2:11]+"]")
+    # except:
+        # None
     return id_list
