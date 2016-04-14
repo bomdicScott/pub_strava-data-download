@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>搜尋 &mdash; strava_crawler 1.0 documentation</title>
+  <title>2. crawler_before &mdash; strava_crawler 1.0 documentation</title>
   
 
   
@@ -30,7 +30,9 @@
   
 
   
-    <link rel="top" title="strava_crawler 1.0 documentation" href="index.html"/> 
+    <link rel="top" title="strava_crawler 1.0 documentation" href="index.html"/>
+        <link rel="next" title="3. support_function" href="support_function.html"/>
+        <link rel="prev" title="1. strava_crawler" href="strava_crawler.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -65,7 +67,7 @@
 
           
 <div role="search">
-  <form id="rtd-search-form" class="wy-form" action="#" method="get">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
@@ -79,9 +81,9 @@
           
             
             
-                <ul>
+                <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="strava_crawler.html">1. strava_crawler</a></li>
-<li class="toctree-l1"><a class="reference internal" href="crawler_before.html">2. crawler_before</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">2. crawler_before</a></li>
 <li class="toctree-l1"><a class="reference internal" href="support_function.html">3. support_function</a></li>
 <li class="toctree-l1"><a class="reference internal" href="plot_picture.html">4. plot_picture</a></li>
 </ul>
@@ -106,7 +108,7 @@
         <div class="rst-content">
           
 
-
+ 
 
 
 
@@ -114,8 +116,12 @@
   <ul class="wy-breadcrumbs">
     <li><a href="index.html">Docs</a> &raquo;</li>
       
-    <li></li>
+    <li>2. crawler_before</li>
       <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/crawler_before.txt" rel="nofollow"> View page source</a>
+          
         
       </li>
   </ul>
@@ -124,23 +130,45 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <noscript>
-  <div id="fallback" class="admonition warning">
-    <p class="last">
-      Please activate JavaScript to enable the search
-      functionality.
-    </p>
-  </div>
-  </noscript>
+  <div class="section" id="crawler-before">
+<h1>2. crawler_before<a class="headerlink" href="#crawler-before" title="Permalink to this headline">¶</a></h1>
+<p>This is some description for crawler_before.py</p>
+<span class="target" id="module-strava_crawler"></span><dl class="function">
+<dt>
+<code class="descclassname">crawler_before.</code><code class="descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/crawler_before.html#main"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>此為二號主程式，主要功能如下:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li>根據某使用者過往之 activities ID，撈取資料並分筆儲存成 activities.json 檔案</li>
+<li>由過往之 activities ID 抓取該筆 activities 之 streams 資料分解並儲存為 ID_streams.csv , ID_streams.json 檔案</li>
+<li>由 streams 分解出之資料繪製成圖 ( Distance 為 x 軸 - Distance_pic.png , Time 為 x 軸 - Time_pic.png )</li>
+<li>此程式主要目的為抓取使用者30筆以前的資料</li>
+</ol>
+</div></blockquote>
+<p>注意 : 以上所有功能所儲存之檔案，均儲存於同一資料夾，且該資料夾之路徑為 &#8211; 使用者名稱 / type_id_distance_speed_heartrate</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>例</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">Judith.Hsiang / Run_455904370_4.58km_8.41kmph_143bpm</span><dd>曉春.賴 / Ride_452655005_49.87km_16.12kmph</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
 
-  
-  <div id="search-results">
-  
-  </div>
+</div>
+
 
            </div>
           </div>
           <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="support_function.html" class="btn btn-neutral float-right" title="3. support_function" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="strava_crawler.html" class="btn btn-neutral" title="1. strava_crawler" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
   
 
   <hr/>
@@ -179,7 +207,6 @@
       <script type="text/javascript" src="_static/underscore.js"></script>
       <script type="text/javascript" src="_static/doctools.js"></script>
       <script type="text/javascript" src="_static/translations.js"></script>
-      <script type="text/javascript" src="_static/searchtools.js"></script>
 
   
 
@@ -195,14 +222,7 @@
           SphinxRtdTheme.StickyNav.enable();
       });
   </script>
-  
-  <script type="text/javascript">
-    jQuery(function() { Search.loadIndex("searchindex.js"); });
-  </script>
-  
-  <script type="text/javascript" id="searchindexloader"></script>
    
-
 
 </body>
 </html>

@@ -4,11 +4,5 @@ support_function
 This is some description for support_function.py
 
 .. automodule:: support_function
-   :members: streams_requests
+   :members: streams_requests,read_table,analysis_data,read_id
    :noindex:
-
-.. automodule:: support_function
-   :members: read_table
-
-.. automodule:: support_function
-   :members: analysis_data

@@ -129,3 +129,32 @@ def analysis_data(id,requests_data):
         streams_csv_list += eval('['+str(streams_csv_temp)+']')
         streams_json_list += eval('['+str(streams_json_temp)+']')
     return streams_json_list,streams_csv_list
+
+def read_id(list_path):
+    """
+    Read ID_list.csv get the activity_id and return it.
+
+    Parameters:
+        - list_path (str):  The path of id_list.csv, different user has different list_path
+
+    Returns:
+        - id_list (list): Include the activities ID
+
+    Raises:
+        - AttributeError
+        - KeyError
+
+    A really simple function. Really!
+
+    >>> list_path = "C:/../../"+user_id+"_list.csv"
+    >>> read_id(list_path)
+
+    """
+    id_list = []
+    try:
+        with open(list_path,"r+b") as data_list:
+            for data in csv.reader(data_list,encoding='utf-8'):
+                id_list += eval("["+str(data)[2:11]+"]")
+    except:
+        None
+    return id_list

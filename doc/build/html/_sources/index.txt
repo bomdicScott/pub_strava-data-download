@@ -12,9 +12,10 @@ Contents:
    :numbered: 2
 
    strava_crawler
+   crawler_before
    support_function
    plot_picture
-
+   
 Indices and tables
 ==================
 

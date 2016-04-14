@@ -1,0 +1,296 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>crawler_before &mdash; strava_crawler 1.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="strava_crawler 1.0 documentation" href="../index.html"/>
+        <link rel="up" title="Module code" href="index.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> strava_crawler
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../strava_crawler.html">1. strava_crawler</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../crawler_before.html">2. crawler_before</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../support_function.html">3. support_function</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../plot_picture.html">4. plot_picture</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">strava_crawler</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="index.html">Module code</a> &raquo;</li>
+      
+    <li>crawler_before</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for crawler_before</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">.. module:: strava_crawler</span>
+<span class="sd">   :synopsis: 此為用來全自動抓取 STRAVA 上使用者資料的程式。</span>
+
+<span class="sd">.. moduleauthor:: Sean Hsu</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">os</span><span class="o">,</span><span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">plot_picture</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">support_function</span> <span class="kn">import</span> <span class="o">*</span>
+
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../crawler_before.html#crawler_before.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    此為二號主程式，主要功能如下:</span>
+
+<span class="sd">        1. 根據某使用者過往之 activities ID，撈取資料並分筆儲存成 activities.json 檔案</span>
+<span class="sd">        2. 由過往之 activities ID 抓取該筆 activities 之 streams 資料分解並儲存為 ID_streams.csv , ID_streams.json 檔案</span>
+<span class="sd">        3. 由 streams 分解出之資料繪製成圖 ( Distance 為 x 軸 - Distance_pic.png , Time 為 x 軸 - Time_pic.png )</span>
+<span class="sd">        4. 此程式主要目的為抓取使用者30筆以前的資料</span>
+
+<span class="sd">    注意 : 以上所有功能所儲存之檔案，均儲存於同一資料夾，且該資料夾之路徑為 -- 使用者名稱 / type_id_distance_speed_heartrate \n</span>
+<span class="sd">            例 : Judith.Hsiang / Run_455904370_4.58km_8.41kmph_143bpm</span>
+<span class="sd">                 曉春.賴 / Ride_452655005_49.87km_16.12kmph</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">com_filepath</span> <span class="o">=</span> <span class="s2">&quot;C:/Users/sean/desktop/strava_raw_data/&quot;</span> <span class="c1">#檔案讀存路徑</span>
+    <span class="n">user_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">com_filepath</span><span class="o">+</span><span class="s2">&quot;strava_user.csv&quot;</span><span class="p">,</span><span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="c1">#讀取使用者資訊</span>
+    <span class="n">com_url</span> <span class="o">=</span> <span class="s1">&#39;https://www.strava.com/api/v3/&#39;</span> <span class="c1"># API路徑</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># 將user ID放入,可指定使用者,空白視為全選</span>
+    <span class="c1"># user = [&quot;523691&quot;]  # scott</span>
+
+    <span class="k">for</span> <span class="n">people</span> <span class="ow">in</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">user_file</span><span class="p">,</span><span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="p">(</span> <span class="n">user</span> <span class="o">==</span> <span class="p">[]</span> <span class="ow">or</span> <span class="n">people</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span> <span class="ow">in</span> <span class="n">user</span> <span class="p">):</span><span class="c1"># 判斷此user是否在限制名單內,若名單為空則視為不限制user</span>
+            <span class="k">print</span><span class="p">(</span><span class="s2">&quot;User ID: &quot;</span> <span class="o">+</span> <span class="n">people</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot; START&quot;</span><span class="p">)</span>
+
+            <span class="n">header</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Authorization&#39;</span><span class="p">:</span> <span class="s1">&#39;Bearer &#39;</span><span class="o">+</span><span class="n">people</span><span class="p">[</span><span class="mi">1</span><span class="p">]}</span> <span class="c1">#將token加在header中</span>
+
+            <span class="n">user_path</span> <span class="o">=</span> <span class="n">com_filepath</span><span class="o">+</span><span class="n">people</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">+</span><span class="s2">&quot;.&quot;</span><span class="o">+</span><span class="n">people</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">user_path</span><span class="p">):</span> <span class="c1">#建立使用者專屬資料夾</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">user_path</span><span class="p">)</span>
+
+            <span class="n">table</span> <span class="o">=</span> <span class="n">read_table</span><span class="p">(</span><span class="n">user_path</span><span class="o">+</span><span class="s2">&quot;/activities_table.csv&quot;</span><span class="p">)</span> <span class="c1">#讀取使用者 activities_table 中的資料</span>
+
+            <span class="n">id_list</span> <span class="o">=</span> <span class="n">read_id</span><span class="p">(</span><span class="n">com_filepath</span><span class="o">+</span><span class="n">people</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span><span class="o">+</span><span class="s2">&quot;_list.csv&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="p">(</span> <span class="n">id_list</span> <span class="o">!=</span> <span class="p">[]</span> <span class="p">):</span>
+                <span class="k">for</span> <span class="n">activities_id</span> <span class="ow">in</span> <span class="n">id_list</span><span class="p">:</span>
+                    <span class="n">time_start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+                    <span class="n">activities</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">com_url</span><span class="o">+</span><span class="s2">&quot;activities/&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">activities_id</span><span class="p">),</span> <span class="n">headers</span><span class="o">=</span><span class="n">header</span><span class="p">)</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+                    <span class="nb">id</span> <span class="o">=</span> <span class="n">activities</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
+                    <span class="k">if</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">table</span><span class="p">):</span> <span class="c1"># 判斷此筆activities資料是否已經存在</span>
+
+                        <span class="n">average_speed</span> <span class="o">=</span> <span class="n">activities</span><span class="p">[</span><span class="s2">&quot;average_speed&quot;</span><span class="p">]</span><span class="o">*</span><span class="mf">3.6</span> <span class="c1"># 將 公尺/秒 轉換為 公里/小時</span>
+                        <span class="n">distance</span>  <span class="o">=</span> <span class="n">activities</span><span class="p">[</span><span class="s2">&quot;distance&quot;</span><span class="p">]</span><span class="o">/</span><span class="mi">1000</span> <span class="c1"># 將 m 轉換為 km</span>
+                        <span class="n">type_name</span> <span class="o">=</span> <span class="n">activities</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span>
+
+                        <span class="k">if</span> <span class="p">(</span><span class="n">activities</span><span class="p">[</span><span class="s2">&quot;has_heartrate&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="bp">True</span><span class="p">):</span>
+                            <span class="n">average_heartrate</span> <span class="o">=</span> <span class="n">activities</span><span class="p">[</span><span class="s2">&quot;average_heartrate&quot;</span><span class="p">]</span>
+                            <span class="n">filepath</span> <span class="o">=</span> <span class="n">user_path</span><span class="o">+</span><span class="s2">&quot;/&quot;</span><span class="o">+</span><span class="n">type_name</span><span class="o">+</span><span class="s2">&quot;_&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;_&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%.2f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">distance</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;km_&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%.2f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">average_speed</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;kmph_&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">average_heartrate</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;bpm&quot;</span> <span class="c1"># 資料夾命名規則 type_id_distance_speed</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">filepath</span> <span class="o">=</span> <span class="n">user_path</span><span class="o">+</span><span class="s2">&quot;/&quot;</span><span class="o">+</span><span class="n">type_name</span><span class="o">+</span><span class="s2">&quot;_&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;_&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%.2f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">distance</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;km_&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%.2f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">average_speed</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;kmph&quot;</span>
+
+                        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">filepath</span><span class="p">):</span>
+                            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+
+                        <span class="n">requests_data</span> <span class="o">=</span> <span class="n">streams_requests</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span><span class="n">com_url</span><span class="p">,</span><span class="n">header</span><span class="p">)</span> <span class="c1"># 依照ID編號 Requests 該 Streams 的所有資料並分解出Data部分再回傳</span>
+
+                        <span class="n">streams_json_list</span><span class="p">,</span><span class="n">streams_csv_list</span> <span class="o">=</span> <span class="n">analysis_data</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span><span class="n">requests_data</span><span class="p">)</span> <span class="c1"># 將requests得到的資料分解成 .json 格式並回傳,同時將其寫入到.csv 檔中</span>
+
+                        <span class="n">data_plot</span><span class="p">(</span><span class="n">requests_data</span><span class="p">,</span><span class="n">filepath</span><span class="p">)</span> <span class="c1"># 繪製圖表並輸出成.png檔案</span>
+
+                        <span class="c1">#以下為檔案輸出部分</span>
+                        <span class="n">csv_header</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">,</span><span class="s1">&#39;lat&#39;</span><span class="p">,</span><span class="s1">&#39;lng&#39;</span><span class="p">,</span><span class="s1">&#39;distance&#39;</span><span class="p">,</span><span class="s1">&#39;altitude&#39;</span><span class="p">,</span><span class="s1">&#39;velocity_smooth&#39;</span><span class="p">,</span><span class="s1">&#39;heartrate&#39;</span><span class="p">,</span><span class="s1">&#39;cadence&#39;</span><span class="p">,</span><span class="s1">&#39;watts&#39;</span><span class="p">,</span><span class="s1">&#39;temp&#39;</span><span class="p">,</span><span class="s1">&#39;grade_smooth&#39;</span><span class="p">]</span>
+                        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filepath</span><span class="o">+</span><span class="s2">&quot;/&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;_streams.csv&quot;</span><span class="p">,</span><span class="s2">&quot;ab&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">streams_csv</span><span class="p">:</span>
+                            <span class="n">csv</span><span class="o">.</span><span class="n">writer</span><span class="p">(</span><span class="n">streams_csv</span><span class="p">)</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">csv_header</span><span class="p">)</span> <span class="c1"># 將header寫入到.csv檔中</span>
+                            <span class="n">csv</span><span class="o">.</span><span class="n">writer</span><span class="p">(</span><span class="n">streams_csv</span><span class="p">)</span><span class="o">.</span><span class="n">writerows</span><span class="p">(</span><span class="n">streams_csv_list</span><span class="p">)</span><span class="c1">#將分解完的資料存入.csv中</span>
+                            <span class="n">streams_csv</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+                        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filepath</span><span class="o">+</span><span class="s2">&quot;/activities.json&quot;</span><span class="p">,</span><span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">activities_json</span><span class="p">:</span><span class="c1">#將單筆 activities 的資料寫入 .json 檔中</span>
+                            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">activities</span><span class="p">,</span><span class="n">activities_json</span><span class="p">)</span>
+                            <span class="n">activities_json</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+                        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filepath</span><span class="o">+</span><span class="s2">&quot;/&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;_streams.json&quot;</span><span class="p">,</span><span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">streams_json</span><span class="p">:</span><span class="c1">#將分解完的資料存入 .json 檔中</span>
+                            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">streams_json_list</span><span class="p">,</span><span class="n">streams_json</span><span class="p">)</span>
+                            <span class="n">streams_json</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+                        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filepath</span><span class="o">+</span><span class="s2">&quot;/&quot;</span><span class="o">+</span><span class="s2">&quot;strava_stream.json&quot;</span><span class="p">,</span><span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">streams_json</span><span class="p">:</span><span class="c1">#compatible with louie&#39;s format</span>
+                            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">streams_json_list</span><span class="p">,</span><span class="n">streams_json</span><span class="p">)</span>
+                            <span class="n">streams_json</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+                        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">user_path</span><span class="o">+</span><span class="s2">&quot;/direct_table.csv&quot;</span><span class="p">,</span><span class="s2">&quot;ab&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">activities_direct</span><span class="p">:</span><span class="c1">#建立direct_table.csv</span>
+                            <span class="n">csv</span><span class="o">.</span><span class="n">writer</span><span class="p">(</span><span class="n">activities_direct</span><span class="p">)</span><span class="o">.</span><span class="n">writerow</span><span class="p">([</span><span class="nb">id</span><span class="p">,</span><span class="n">filepath</span><span class="p">])</span><span class="c1">#紀錄檔案路徑,以後讀取檔案時使用</span>
+                            <span class="n">activities_direct</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+                        <span class="n">table</span> <span class="o">+=</span> <span class="p">[</span><span class="nb">id</span><span class="p">]</span> <span class="c1">#在table中加入最新的 activities ID</span>
+                        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">user_path</span><span class="o">+</span><span class="s2">&quot;/activities_table.csv&quot;</span><span class="p">,</span><span class="s2">&quot;w+b&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">activities_table</span><span class="p">:</span>
+                            <span class="n">csv</span><span class="o">.</span><span class="n">writer</span><span class="p">(</span><span class="n">activities_table</span><span class="p">)</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">table</span><span class="p">)</span><span class="c1">#將table寫入檔案中</span>
+                            <span class="n">activities_table</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+                        <span class="n">time_stop</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="n">activities</span><span class="p">[</span><span class="s2">&quot;has_heartrate&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="bp">True</span><span class="p">):</span>
+                            <span class="k">print</span><span class="p">(</span><span class="s2">&quot;ID : &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; finished download   COST: &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%.2f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">time_stop</span><span class="o">-</span><span class="n">time_start</span><span class="p">)</span><span class="o">%</span><span class="mi">180</span><span class="p">))</span><span class="o">+</span><span class="s2">&quot; second, has_heartrate&quot;</span><span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="k">print</span><span class="p">(</span><span class="s2">&quot;ID : &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; finished download   COST: &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%.2f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">time_stop</span><span class="o">-</span><span class="n">time_start</span><span class="p">)</span><span class="o">%</span><span class="mi">180</span><span class="p">))</span><span class="o">+</span><span class="s2">&quot; second&quot;</span><span class="p">)</span>
+    <span class="n">user_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Sean_Hsu.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="../_static/translations.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

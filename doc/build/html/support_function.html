@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>2. support_function &mdash; strava_crawler 1.0 documentation</title>
+  <title>3. support_function &mdash; strava_crawler 1.0 documentation</title>
   
 
   
@@ -31,8 +31,8 @@
 
   
     <link rel="top" title="strava_crawler 1.0 documentation" href="index.html"/>
-        <link rel="next" title="3. plot_picture" href="plot_picture.html"/>
-        <link rel="prev" title="1. strava_crawler" href="strava_crawler.html"/> 
+        <link rel="next" title="4. plot_picture" href="plot_picture.html"/>
+        <link rel="prev" title="2. crawler_before" href="crawler_before.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -83,8 +83,9 @@
             
                 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="strava_crawler.html">1. strava_crawler</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">2. support_function</a></li>
-<li class="toctree-l1"><a class="reference internal" href="plot_picture.html">3. plot_picture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="crawler_before.html">2. crawler_before</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">3. support_function</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plot_picture.html">4. plot_picture</a></li>
 </ul>
 
             
@@ -115,7 +116,7 @@
   <ul class="wy-breadcrumbs">
     <li><a href="index.html">Docs</a> &raquo;</li>
       
-    <li>2. support_function</li>
+    <li>3. support_function</li>
       <li class="wy-breadcrumbs-aside">
         
           
@@ -130,7 +131,7 @@
            <div itemprop="articleBody">
             
   <div class="section" id="support-function">
-<h1>2. support_function<a class="headerlink" href="#support-function" title="Permalink to this headline">¶</a></h1>
+<h1>3. support_function<a class="headerlink" href="#support-function" title="Permalink to this headline">¶</a></h1>
 <p>This is some description for support_function.py</p>
 <dl class="function">
 <dt>
@@ -165,9 +166,9 @@
 </div>
 </dd></dl>
 
-<span class="target" id="module-support_function"></span><dl class="function">
-<dt id="support_function.read_table">
-<code class="descclassname">support_function.</code><code class="descname">read_table</code><span class="sig-paren">(</span><em>table_path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/support_function.html#read_table"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#support_function.read_table" title="Permalink to this definition">¶</a></dt>
+<dl class="function">
+<dt>
+<code class="descclassname">support_function.</code><code class="descname">read_table</code><span class="sig-paren">(</span><em>table_path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/support_function.html#read_table"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Read activities_table.csv and return it.</p>
 <dl class="docutils">
 <dt>Parameters:</dt>
@@ -194,9 +195,9 @@
 </div>
 </dd></dl>
 
-<span class="target" id="module-support_function"></span><dl class="function">
-<dt id="support_function.analysis_data">
-<code class="descclassname">support_function.</code><code class="descname">analysis_data</code><span class="sig-paren">(</span><em>id</em>, <em>requests_data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/support_function.html#analysis_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#support_function.analysis_data" title="Permalink to this definition">¶</a></dt>
+<dl class="function">
+<dt>
+<code class="descclassname">support_function.</code><code class="descname">analysis_data</code><span class="sig-paren">(</span><em>id</em>, <em>requests_data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/support_function.html#analysis_data"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Disaggregated data in the order then parse into json and csv format</p>
 <dl class="docutils">
 <dt>Parameters:</dt>
@@ -228,6 +229,35 @@
 </div>
 </dd></dl>
 
+<dl class="function">
+<dt>
+<code class="descclassname">support_function.</code><code class="descname">read_id</code><span class="sig-paren">(</span><em>list_path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/support_function.html#read_id"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Read ID_list.csv get the activity_id and return it.</p>
+<dl class="docutils">
+<dt>Parameters:</dt>
+<dd><ul class="first last simple">
+<li>list_path (str):  The path of id_list.csv, different user has different list_path</li>
+</ul>
+</dd>
+<dt>Returns:</dt>
+<dd><ul class="first last simple">
+<li>id_list (list): Include the activities ID</li>
+</ul>
+</dd>
+<dt>Raises:</dt>
+<dd><ul class="first last simple">
+<li>AttributeError</li>
+<li>KeyError</li>
+</ul>
+</dd>
+</dl>
+<p>A really simple function. Really!</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">list_path</span> <span class="o">=</span> <span class="s2">&quot;C:/../../&quot;</span><span class="o">+</span><span class="n">user_id</span><span class="o">+</span><span class="s2">&quot;_list.csv&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">read_id</span><span class="p">(</span><span class="n">list_path</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
 </div>
 
 
@@ -237,10 +267,10 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="plot_picture.html" class="btn btn-neutral float-right" title="3. plot_picture" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="plot_picture.html" class="btn btn-neutral float-right" title="4. plot_picture" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="strava_crawler.html" class="btn btn-neutral" title="1. strava_crawler" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="crawler_before.html" class="btn btn-neutral" title="2. crawler_before" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
