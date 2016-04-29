@@ -2,7 +2,11 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/../../Draw_line/.idea/Draw_line.iml" filepath="$PROJECT_DIR$/../../Draw_line/.idea/Draw_line.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../SVR/.idea/SVR.iml" filepath="$PROJECT_DIR$/../../SVR/.idea/SVR.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/bOMDIC.iml" filepath="$PROJECT_DIR$/.idea/bOMDIC.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../fit_to_csv/.idea/fit_to_csv.iml" filepath="$PROJECT_DIR$/../../fit_to_csv/.idea/fit_to_csv.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../python-fitparse-master/.idea/python-fitparse-master.iml" filepath="$PROJECT_DIR$/../../python-fitparse-master/.idea/python-fitparse-master.iml" />
     </modules>
   </component>
 </project>

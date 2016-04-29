@@ -33,9 +33,12 @@ def streams_requests(streams_id,com_url,header):
         try:
             while(True):
                 requests_dict[types] = requests.get(com_url+"activities/"+str(streams_id)+"/streams/"+types, headers=header).json()
-                error = requests_dict[types]["errors"] #成功則表示requests達到上限
-                print("Streams requests occur Rate limit , wait 180 second")
-                time.sleep(180)
+                if(requests_dict[types]["message"] == 'Record Not Found'):#成功則表示requests達到上限
+                    print('OH! NO! This record is not found , we must give up this data')
+                    return None
+                else:
+                    print("Streams requests occur Rate limit , wait 180 second")
+                    time.sleep(180)
         except:
             None
         requests_data[types] = None

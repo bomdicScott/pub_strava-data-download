@@ -6,7 +6,7 @@
 .. moduleauthor:: Sean Hsu
 
 """
-import os,json
+import json
 from plot_picture import *
 from support_function import *
 
@@ -23,10 +23,10 @@ def main():
                  曉春.賴 / Ride_452655005_49.87km_16.12kmph
 
     """
-    com_filepath = "C:/Users/sean/desktop/strava_raw_data/" #檔案讀存路徑
+    com_filepath = "C:/Users/sean/desktop/bOMDIC/" #檔案讀存路徑
     user_file = open(com_filepath+"strava_user.csv","rb") #讀取使用者資訊
     com_url = 'https://www.strava.com/api/v3/' # API路徑
-    user = []  # 將user ID放入,可指定使用者,空白視為全選
+    user = ['1305299','14093791']  # 將user ID放入,可指定使用者,空白視為全選
     # user = ["523691"]  # scott
 
     for people in csv.reader(user_file,encoding='utf-8'):
@@ -52,6 +52,7 @@ def main():
             for activities in activities_mes:
 
                 id = activities["id"]
+                print(id)
                 if(str(id) not in table): # 判斷此筆activities資料是否已經存在
                     time_start = time.time()
                     average_speed = activities["average_speed"]*3.6 # 將 公尺/秒 轉換為 公里/小時
@@ -64,42 +65,43 @@ def main():
                     else:
                         filepath = user_path+"/"+type_name+"_"+str(id)+"_"+str('%.2f' % distance)+"km_"+str('%.2f' % average_speed)+"kmph"
 
-                    if not os.path.exists(filepath):
-                        os.makedirs(filepath)
-
                     requests_data = streams_requests(id,com_url,header) # 依照ID編號 Requests 該 Streams 的所有資料並分解出Data部分再回傳
 
-                    streams_json_list,streams_csv_list = analysis_data(id,requests_data) # 將requests得到的資料分解成 .json 格式並回傳,同時將其寫入到.csv 檔中
+                    if(requests_data != None):
+                        if not os.path.exists(filepath):
+                            os.makedirs(filepath)
 
-                    data_plot(requests_data,filepath) # 繪製圖表並輸出成.png檔案
+                        streams_json_list,streams_csv_list = analysis_data(id,requests_data) # 將requests得到的資料分解成 .json 格式並回傳,同時將其寫入到.csv 檔中
 
-                    #以下為檔案輸出部分
-                    csv_header = ['time','lat','lng','distance','altitude','velocity_smooth','heartrate','cadence','watts','temp','grade_smooth']
-                    with open(filepath+"/"+str(id)+"_streams.csv","ab") as streams_csv:
-                        csv.writer(streams_csv).writerow(csv_header) # 將header寫入到.csv檔中
-                        csv.writer(streams_csv).writerows(streams_csv_list)#將分解完的資料存入.csv中
-                        streams_csv.close()
-                    with open(filepath+"/activities.json","w") as activities_json:#將單筆 activities 的資料寫入 .json 檔中
-                        json.dump(activities,activities_json)
-                        activities_json.close()
-                    with open(filepath+"/"+str(id)+"_streams.json","w") as streams_json:#將分解完的資料存入 .json 檔中
-                        json.dump(streams_json_list,streams_json)
-                        streams_json.close()
-                    with open(filepath+"/"+"strava_stream.json","w") as streams_json:#compatible with louie's format
-                        json.dump(streams_json_list,streams_json)
-                        streams_json.close()
-                    with open(user_path+"/direct_table.csv","ab") as activities_direct:#建立direct_table.csv
-                        csv.writer(activities_direct).writerow([id,filepath])#紀錄檔案路徑,以後讀取檔案時使用
-                        activities_direct.close()
-                    table += [id] #在table中加入最新的 activities ID
-                    with open(user_path+"/activities_table.csv","w+b") as activities_table:
-                        csv.writer(activities_table).writerow(table)#將table寫入檔案中
-                        activities_table.close()
-                    time_stop = time.time()
-                    if (activities["has_heartrate"] == True):
-                        print("ID : " + str(id) + " finished download   COST: "+str('%.2f' % (float(time_stop-time_start)%180))+" second, has_heartrate")
-                    else:
-                        print("ID : " + str(id) + " finished download   COST: "+str('%.2f' % (float(time_stop-time_start)%180))+" second")
+                        data_plot(requests_data,filepath) # 繪製圖表並輸出成.png檔案
+
+                        #以下為檔案輸出部分
+                        csv_header = ['time','lat','lng','distance','altitude','velocity_smooth','heartrate','cadence','watts','temp','grade_smooth']
+                        with open(filepath+"/"+str(id)+"_streams.csv","ab") as streams_csv:
+                            csv.writer(streams_csv).writerow(csv_header) # 將header寫入到.csv檔中
+                            csv.writer(streams_csv).writerows(streams_csv_list)#將分解完的資料存入.csv中
+                            streams_csv.close()
+                        with open(filepath+"/activities.json","w") as activities_json:#將單筆 activities 的資料寫入 .json 檔中
+                            json.dump(activities,activities_json)
+                            activities_json.close()
+                        with open(filepath+"/"+str(id)+"_streams.json","w") as streams_json:#將分解完的資料存入 .json 檔中
+                            json.dump(streams_json_list,streams_json)
+                            streams_json.close()
+                        with open(filepath+"/"+"strava_stream.json","w") as streams_json:#compatible with louie's format
+                            json.dump(streams_json_list,streams_json)
+                            streams_json.close()
+                        with open(user_path+"/direct_table.csv","ab") as activities_direct:#建立direct_table.csv
+                            csv.writer(activities_direct).writerow([id,filepath])#紀錄檔案路徑,以後讀取檔案時使用
+                            activities_direct.close()
+                        table += [id] #在table中加入最新的 activities ID
+                        with open(user_path+"/activities_table.csv","w+b") as activities_table:
+                            csv.writer(activities_table).writerow(table)#將table寫入檔案中
+                            activities_table.close()
+                        time_stop = time.time()
+                        if (activities["has_heartrate"] == True):
+                            print("ID : " + str(id) + " finished download   COST: "+str('%.2f' % (float(time_stop-time_start)%180))+" second, has_heartrate")
+                        else:
+                            print("ID : " + str(id) + " finished download   COST: "+str('%.2f' % (float(time_stop-time_start)%180))+" second")
     user_file.close()
 
 main()
